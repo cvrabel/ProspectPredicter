@@ -4,41 +4,45 @@
 
 import requests
 import json
+import sys
+import playerStatsDao as dao
 from SeasonStats import SeasonStats
 from bs4 import BeautifulSoup as BS
 
+CURRENT_PLAYER = ""
+WRITE_TO_DB = "False"
 
-def main():
+def execute(year, write_to_db):
+	global WRITE_TO_DB
+	WRITE_TO_DB = write_to_db
 	with open('players.json') as f:
 		playersJson = json.load(f)
-	playerUrls = convertPlayerNamesToUrls(playersJson["players"], playersJson["twos"], playersJson["threes"], playersJson["fours"])
+	playerUrls = constructUrlAndScrape(playersJson["players"+year], playersJson["twos"], playersJson["threes"], playersJson["fours"])
 
-	for url in playerUrls:
-		print(url)
-		scrapeUrl(url)
 
-def convertPlayerNamesToUrls(playerList, twosList, threesList, foursList):
+def constructUrlAndScrape(playerList, twosList, threesList, foursList):
 	baseString = "https://www.sports-reference.com/cbb/players/"
-	endString = "";
-	playerUrls = []
+	endString = ".html";
 
 	for player in playerList:
-		endString = determineEndString(player, twosList, threesList, foursList)
+		playerNum = determinePlayerNum(player, twosList, threesList, foursList)
 		nameList = player.split(" ")
-		url = baseString + nameList[0].lower() + "-" + nameList[1].lower() + endString
-		playerUrls.append(url)
+		global CURRENT_PLAYER 
+		CURRENT_PLAYER = nameList[0].lower() + "-" + nameList[1].lower() + "-" + playerNum
+		url = baseString + CURRENT_PLAYER + endString
+		scrapeUrl(url)
 
-	return playerUrls
 
-def determineEndString(player, twosList, threesList, foursList):
+
+def determinePlayerNum(player, twosList, threesList, foursList):
 	if player in twosList:
-		return "-2.html" 
+		return "2" 
 	elif player in threesList:
-		return "-3.html"
+		return "3"
 	elif player in foursList:
-		return "-4.html"
+		return "4"
 	else:	
-	  return "-1.html"
+	  return "1"
 
 def scrapeUrl(url):
 	page = requests.get(url)
@@ -51,8 +55,12 @@ def scrapeUrl(url):
 		# Stop once we got all the individual season data
 		if dataString[:6] == "Career":
 			break
+
 		seasonData = parseSeasonString(dataString, i)
 
+		# Add the season data to DDB if true
+		if WRITE_TO_DB.lower() == 'true':
+			dao.addItem(seasonData)
 
 def parseSeasonString(data, seasonNum):
 	listStats = data.split("/")
@@ -64,15 +72,13 @@ def parseSeasonString(data, seasonNum):
 		del listStats[14]
 	# Because we deleted 3p%, we must calculate it.
 	threePointPercentage = round(float(listStats[12])/float(listStats[13]), 4) if float(listStats[13]) else 0
-
-	return SeasonStats(seasonNum, listStats[1], listStats[2], listStats[3], listStats[4], listStats[5],
+	
+	print(CURRENT_PLAYER)
+	return SeasonStats(CURRENT_PLAYER, seasonNum, listStats[1], listStats[2], listStats[3], listStats[4], listStats[5],
 		listStats[6], listStats[7], listStats[8], listStats[9], listStats[10], listStats[11], listStats[12], 
-		listStats[13], threePointPercentage, listStats[14], listStats[15], listStats[16], listStats[17], listStats[18], listStats[19], 
-		listStats[20], listStats[21], listStats[22], listStats[23], listStats[24], listStats[25], listStats[26])
-
-
-
+		listStats[13], threePointPercentage, listStats[14], listStats[15], listStats[16], listStats[17], listStats[18], 
+		listStats[19], listStats[20], listStats[21], listStats[22], listStats[23], listStats[24], listStats[25], listStats[26])
 
 
 if __name__ == '__main__':
-	main()
+	execute("2013", sys.argv[1])
