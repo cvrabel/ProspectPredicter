@@ -1,0 +1,7 @@
+There is a discrepancy that I found between the pace calculated from SportsReference and from TeamRanking.  The pace given by TeamRanking is always slightly higher than the SportsReference pace.  After emailing TeamRanking I found that they use the same formula to calculate possesions.  
+
+Possessions = 0.5*(Team1FGA + Team1TOV - Team1ORB + 0.475*Team1FTA) + 0.5*(Team2FGA + Team2TOV - Team2ORB + 0.475*Team2FTA)
+
+The difference is that TeamRanking does not include Team Rebounds in their Offensive Rebound stat, whereas SportsReference does.  This is the cause of the higher pace calculations.  
+
+I will continue to use TeamRanking pace for the teams as their data goes back much farther than SportsReference.  However, when calculating the average yearly pace pre-1997, I am using the SportsReference box scores from the NCAA tournament.  To account for the slightly different ORB value, I will scale the ORB values that I get by 10%.  This is not a perfect estimate, but it will make the calculated pace more in line with the TeamRanking values.  It won't make much of a difference, as pre-1997 I will be calculating each player's per 100 possession stats using the average pace off all teams that year, rather than the far superior method of using their specific team's pace.  
