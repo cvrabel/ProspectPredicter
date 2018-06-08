@@ -1,5 +1,5 @@
 # Player per game stats for a season
-class SeasonStats:
+class PlayerData:
 
 	def __init__(self, player, season, school, conference, games, gamesStarted, minutes, fieldGoalsMade,
 				fieldGoalsAttempted, fieldGoalPercentage, twoPointersMade, twoPointersAttempted,

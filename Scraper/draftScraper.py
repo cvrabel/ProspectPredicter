@@ -12,7 +12,7 @@ def scrapeDrafts():
 	baseUrl = "https://www.basketball-reference.com/draft/NBA_"
 	endUrl = ".html"
 
-	for i in range(1987, 2012):
+	for i in range(2012, 2013):
 		url = baseUrl + str(i) + endUrl
 		page = requests.get(url)
 		soup = BS(page.content, "html.parser")
