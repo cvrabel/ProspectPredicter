@@ -7,7 +7,6 @@ import json
 import sys
 import playerStatsDao as dao
 from PlayerData import PlayerData
-from PlayerDataShort import PlayerDataShort
 
 from bs4 import BeautifulSoup as BS
 
@@ -39,8 +38,8 @@ def determinePlayerNum(player, twosList, threesList, foursList):
 		return "3"
 	elif player in foursList:
 		return "4"
-	else:	
-	  return "1"
+	else:
+		return "1"
 
 def scrapeUrl(url):
 	page = requests.get(url)
