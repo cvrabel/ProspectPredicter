@@ -7,6 +7,7 @@ import json
 import sys
 import playerStatsDao as dao
 from PlayerData import PlayerData
+from PlayerData import PlayerDataEuro
 
 from bs4 import BeautifulSoup as BS
 
@@ -19,8 +20,8 @@ def execute(year):
 
 
 def constructUrlAndScrape(playerList, twosList, threesList, foursList):
-	baseString = "https://www.sports-reference.com/cbb/players/"
-	endString = ".html";
+	baseString = "https://www.basketball-reference.com/euro/players/" if (sys.argv[1] == 'EURO') else "https://www.sports-reference.com/cbb/players/"
+	endString = ".html"
 
 	for player in playerList:
 		playerNum = determinePlayerNum(player, twosList, threesList, foursList)
@@ -49,7 +50,8 @@ def scrapeUrl(url):
 	for i in range(1, len(relevantData)):
 		dataString = relevantData[i].get_text("/")
 		listStats = dataString.split("/")
-		if len(listStats) < 24:
+		print(listStats)
+		if len(listStats) < 22:
 			print("CHECK OUT: " + url)
 		# Stop once we got all the individual season data
 		if dataString[:6] == "Career":
@@ -57,13 +59,22 @@ def scrapeUrl(url):
 
 		valuesList = relevantData[i].find_all("td")
 		
-		seasonData = PlayerData(
-			CURRENT_PLAYER, i, valuesList[0].text, valuesList[1].text, valuesList[2].text, valuesList[3].text, 
-			valuesList[4].text, valuesList[5].text, valuesList[6].text, valuesList[7].text, valuesList[8].text, 
-			valuesList[9].text, valuesList[10].text, valuesList[11].text, valuesList[12].text, valuesList[13].text, 
-			valuesList[14].text, valuesList[15].text, valuesList[16].text, valuesList[17].text, valuesList[18].text, 
-			valuesList[19].text, valuesList[20].text, valuesList[21].text, valuesList[22].text, valuesList[23].text, 
-			valuesList[24].text, valuesList[25].text, valuesList[27].text)
+		if (sys.argv[1] == 'EURO'):
+			seasonData = PlayerDataEuro(
+				CURRENT_PLAYER, i, valuesList[0].text, valuesList[1].text, valuesList[2].text, valuesList[3].text, 
+				valuesList[4].text, valuesList[5].text, valuesList[6].text, valuesList[7].text, valuesList[8].text, 
+				valuesList[9].text, valuesList[10].text, valuesList[11].text, valuesList[12].text, valuesList[13].text, 
+				valuesList[14].text, valuesList[15].text, valuesList[16].text, valuesList[17].text, valuesList[18].text, 
+				valuesList[19].text, valuesList[20].text, valuesList[21].text, valuesList[22].text, valuesList[23].text, 
+				valuesList[24].text, valuesList[25].text, valuesList[27].text)
+		else:
+			seasonData = PlayerData(
+				CURRENT_PLAYER, i, valuesList[0].text, valuesList[1].text, valuesList[2].text, valuesList[3].text, 
+				valuesList[4].text, valuesList[5].text, valuesList[6].text, valuesList[7].text, valuesList[8].text, 
+				valuesList[9].text, valuesList[10].text, valuesList[11].text, valuesList[12].text, valuesList[13].text, 
+				valuesList[14].text, valuesList[15].text, valuesList[16].text, valuesList[17].text, valuesList[18].text, 
+				valuesList[19].text, valuesList[20].text, valuesList[21].text, valuesList[22].text, valuesList[23].text, 
+				valuesList[24].text, valuesList[25].text, valuesList[27].text)
 
 		if sys.argv[2].lower() == 'true':
 			dao.addItem(seasonData)
