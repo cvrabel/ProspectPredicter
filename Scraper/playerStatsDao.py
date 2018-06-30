@@ -32,18 +32,22 @@ def addItem(item: PlayerData):
 			'defensiveRebounds'		: serialize(item.defensiveRebounds),
 			'totalRebounds'			: serialize(item.totalRebounds),
 			'assists'				: serialize(item.assists),
-			'steals'				: serialize(item.blocks),
+			'steals'				: serialize(item.steals),
+			'blocks'				: serialize(item.blocks),
 			'turnovers'				: serialize(item.turnovers),
 			'personalFouls'			: serialize(item.personalFouls),
 			'points'				: serialize(item.points),
-			'strengthOfSchedule'	: serialize(item.strengthOfSchedule)
+			'strengthOfSchedule'	: serialize(item.strengthOfSchedule),
+			'playerNBARating'		: serialize(item.playerNBARating),
+			'ratingsStanding'		: serialize(item.ratingsStanding)
 		})
 	print("PutItem Succeeded")
 
 def serialize(floatValue):
-	if floatValue == '':
-		floatValue = 0
-	return Decimal(str(floatValue))
+	try:
+		return Decimal(str(floatValue))
+	except:
+		return Decimal("0")
 
 
 if __name__ == '__main__':

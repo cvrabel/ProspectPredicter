@@ -1,0 +1,1 @@
+Total Players Rated: 7216 (1950-2013 drafts)

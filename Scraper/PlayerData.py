@@ -5,7 +5,7 @@ class PlayerData:
 				fieldGoalsAttempted, fieldGoalPercentage, twoPointersMade, twoPointersAttempted,
 				twoPointPercentage, threePointersMade, threePointersAttempted, threePointPercentage,
 				freeThrowsMade, freeThrowsAttempted, freeThrowPercentage, offensiveRebounds, defensiveRebounds,
-				totalRebounds, assists, steals, blocks, turnovers, personalFouls, points, strengthOfSchedule):
+				totalRebounds, assists, steals, blocks, turnovers, personalFouls, points, strengthOfSchedule, playerNBARating, ratingsStanding):
 		self.player 				= player 					# 0
 		self.season 				= season 					# 1
 		self.school 				= school					# 2
@@ -35,6 +35,8 @@ class PlayerData:
 		self.personalFouls			= personalFouls				# 26
 		self.points 				= points 					# 27
 		self.strengthOfSchedule		= strengthOfSchedule		# 28
+		self.playerNBARating		= playerNBARating			# 29
+		self.ratingsStanding		= ratingsStanding			# 30
 
 class PlayerDataEuro:
 
