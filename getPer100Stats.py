@@ -21,4 +21,4 @@ def getAverageRatings():
 
 
 def writeListToCSV(lst):
-	header = ["Name", "Season", "School", ""]
+	header = ["Name", "Season", "School", "Games", "Games Started", "2P"]

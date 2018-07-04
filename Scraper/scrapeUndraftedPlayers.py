@@ -106,13 +106,13 @@ def createRatingMappingJson(playerName, rating):
 	print(playerDict)
 
 	try:
-		with open('playerRatings.json') as f:
+		with open('playerRatings1950_2009.json') as f:
 			mappingsJson = json.load(f)
 		mappingsJson.update(playerDict)
 	except:
 		mappingsJson = playerDict
 
-	with open('playerRatings.json', 'w') as f:
+	with open('playerRatings1950_2009.json', 'w') as f:
 		json.dump(mappingsJson, f, indent=2)
 
 if __name__ == '__main__':

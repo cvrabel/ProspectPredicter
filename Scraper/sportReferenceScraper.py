@@ -18,10 +18,12 @@ with open('playerRatings.json') as f:
 sortedRatings = sorted(ratingsJson, key=ratingsJson.get)
 
 def execute(start, end):
-	for year in range(int(start), int(end)+1):
-		with open('players.json') as f:
+	with open('players.json') as f:
 			playersJson = json.load(f)
-		playerUrls = constructUrlAndScrape(playersJson["players"+str(year)], playersJson["twos"], playersJson["threes"], playersJson["fours"], playersJson["fives"])
+	# for year in range(int(start), int(end)+1):
+	# 	playerUrls = constructUrlAndScrape(playersJson["players"+str(year)], playersJson["twos"], playersJson["threes"], playersJson["fours"], playersJson["fives"])
+	
+	playerUrls = constructUrlAndScrape(playersJson["playersUndrafted"], playersJson["twos"], playersJson["threes"], playersJson["fours"], playersJson["fives"])	
 
 
 def constructUrlAndScrape(playerList, twosList, threesList, foursList, fivesList):
@@ -30,8 +32,8 @@ def constructUrlAndScrape(playerList, twosList, threesList, foursList, fivesList
 
 	for player in playerList:
 		playerNum = determinePlayerNum(player, twosList, threesList, foursList, fivesList)
-		player = player.replace("'", "").replace(".", "")
-		nameList = player.split(" ")
+		playerNoPunctuation = player.replace("'", "").replace(".", "")
+		nameList = playerNoPunctuation.split(" ")
 		global CURRENT_PLAYER 
 		CURRENT_PLAYER = nameList[0].lower() + "-" + nameList[1].lower() + "-" + playerNum
 		url = baseString + CURRENT_PLAYER + endString
@@ -64,10 +66,13 @@ def scrapeUrl(url, playerName):
 		# Stop once we got all the individual season data
 		valuesList = relevantData[i].find_all("td")
 		conference = valuesList[1].text
+		year = i-1
 		if dataString[:6] == "Career":
 			breakAfter = True
 			conference = "Conf"
-
+		else:
+			linkYearText = valuesList[0].find('a', href=True)["href"]
+			year = int(linkYearText[len(linkYearText)-9:len(linkYearText)-5])
 		rating = -1
 		ratingsStanding = -1
 		try:
@@ -75,14 +80,17 @@ def scrapeUrl(url, playerName):
 			ratingsStanding = sortedRatings.index(playerName)
 		except: 
 			pass
+
+
 		seasonData = PlayerData(
-			CURRENT_PLAYER, i, valuesList[0].text, conference, valuesList[2].text, valuesList[3].text, 
+			CURRENT_PLAYER, year, valuesList[0].text, conference, valuesList[2].text, valuesList[3].text, 
 			valuesList[4].text, valuesList[5].text, valuesList[6].text, valuesList[7].text, valuesList[8].text, 
 			valuesList[9].text, valuesList[10].text, valuesList[11].text, valuesList[12].text, valuesList[13].text, 
 			valuesList[14].text, valuesList[15].text, valuesList[16].text, valuesList[17].text, valuesList[18].text, 
 			valuesList[19].text, valuesList[20].text, valuesList[21].text, valuesList[22].text, valuesList[23].text, 
 			valuesList[24].text, valuesList[25].text, valuesList[27].text, rating, ratingsStanding)
-		print(seasonData.player + " " + str(seasonData.strengthOfSchedule))
+		print(seasonData.player + " --- " + str(year))
+
 		if sys.argv[3].lower() == 'true':
 			dao.addItem(seasonData)
 

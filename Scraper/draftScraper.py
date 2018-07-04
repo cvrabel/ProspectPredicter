@@ -12,16 +12,16 @@ def scrapeDrafts():
 	baseUrl = "https://www.basketball-reference.com/draft/NBA_"
 	endUrl = ".html"
 
-	for i in range(2014, 2019):
+	for i in range(2010, 2019):
 		url = baseUrl + str(i) + endUrl
 		page = requests.get(url)
 		soup = BS(page.content, "html.parser")
 		tables = soup.find_all("tr")
-		scrapeTablesForPlayerNames(str(i), tables)
-		# scrapeTablesForPlayerLinks(str(i), tables)
+		# scrapeTablesForPlayerNames(str(i), tables)
+		scrapeEachDraftTableAndGetRatings(str(i), tables)
 
 
-def scrapeTablesForPlayerLinks(year, tables):
+def scrapeEachDraftTableAndGetRatings(year, tables):
 	for i in range(2, len(tables)):
 		try:
 			playerRow = tables[i]
@@ -43,7 +43,7 @@ def getPlayerRating(playerRow):
 		page = requests.get(url)
 		soup = BS(page.content, "html.parser")
 		playerName = playerLinkObject.text
-		createNameMappingJson(playerName, playerUrl)
+		# createNameMappingJson(playerName, playerUrl)
 
 		blingSoup = soup.find(id="bling")
 		firstYear = float(soup.find_all("tr")[1].get_text("/")[:4])
@@ -136,14 +136,16 @@ def createRatingMappingJson(playerName, rating):
 	mappingsJson = {}
 	print(playerDict)
 
+	jsonFileName = 'playerRatings.json'
+
 	try:
-		with open('playerRatings.json') as f:
+		with open(jsonFileName) as f:
 			mappingsJson = json.load(f)
 		mappingsJson.update(playerDict)
 	except:
 		mappingsJson = playerDict
 
-	with open('playerRatings.json', 'w') as f:
+	with open(jsonFileName, 'w') as f:
 		json.dump(mappingsJson, f, indent=2)
 
 if __name__ == '__main__':
